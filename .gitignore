@@ -1,0 +1,3 @@
+backend/.env
+backend/*.sln
+backend/appsettings.Development.json
