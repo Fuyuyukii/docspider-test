@@ -12,6 +12,6 @@ namespace backend.Repositories.Interfaces
     Task Update(Document document);
     Task Delete(int id);
     Task<bool> ExistsByTitle(string title);
-    Task<IEnumerable<Document>> GetDocuments(int? page, int? pageSize, string? searchTerm, string? orderBy, string? order);
+    Task<IEnumerable<Document>> GetDocuments(int? page, int? pageSize, string? searchTerm, string? orderBy, string? order, string? startDate, string? endDate);
   }
 }

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using middlewares.ExceptionMiddleware;
 using dotenv.net;
+using Microsoft.Extensions.Logging;
 
 public class Startup
 {
@@ -22,7 +23,7 @@ public class Startup
 
     // Método para configurar serviços
     public void ConfigureServices(IServiceCollection services)
-    {   
+    {
         DotEnv.Load();
 
         var server = Environment.GetEnvironmentVariable("PG_HOST")?.Trim();
@@ -34,10 +35,23 @@ public class Startup
         var connectionString = $"Server={server};Database={database};User Id={user};Password={password};Port={port}";
 
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(connectionString)
+            options
+                .UseNpgsql(connectionString)
         );
 
         services.AddScoped<IDocumentRepository, DocumentRepository>();
+
+        // 🔥 Configuração de CORS (liberando tudo)
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", builder =>
+            {
+                builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
 
         services.AddControllers();
         services.AddSwaggerGen();
@@ -49,15 +63,18 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI(c => 
+            app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Document API v1");
             });
         }
-        
+
         app.UseMiddleware<ExceptionMiddleware>();
 
         app.UseRouting();
+
+        // 🔥 Ativa o CORS
+        app.UseCors("AllowAll");
 
         app.UseAuthorization();
 

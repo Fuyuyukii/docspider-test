@@ -42,10 +42,12 @@ namespace backend.Controllers
       [FromQuery] int? pageSize,
       [FromQuery] string? searchTerm,
       [FromQuery] string? orderBy,
-      [FromQuery] string? order
+      [FromQuery] string? order,
+      [FromQuery] string? startDate,
+      [FromQuery] string? endDate
     )
-    {
-      var documents = await _repository.GetDocuments(page, pageSize, searchTerm, orderBy, order);
+    { 
+      var documents = await _repository.GetDocuments(page, pageSize, searchTerm, orderBy, order, startDate, endDate);
       var response = new ApiResponse<IEnumerable<Document>>(documents);
       return Ok(response);
     }

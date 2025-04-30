@@ -55,11 +55,11 @@ namespace backend.Repositories.Implementations
       return await _context.Documents.AnyAsync(d => d.Title == title);
     }
 
-    public async Task<IEnumerable<Document>> GetDocuments(int? page, int? pageSize, string? searchTerm, string? orderBy, string? order)
+    public async Task<IEnumerable<Document>> GetDocuments(int? page, int? pageSize, string? searchTerm, string? orderBy, string? order, string? startDate, string? endDate)
     {
       var query = _context.Documents.AsQueryable();
 
-      if (!string.IsNullOrWhiteSpace(searchTerm)) query = ApplyFilter(query, searchTerm);
+      if (!string.IsNullOrWhiteSpace(searchTerm)) query = ApplyFilter(query, searchTerm, startDate, endDate);
 
       if (!string.IsNullOrWhiteSpace(orderBy) && !string.IsNullOrWhiteSpace(order)) {
         query = ApplyOrdering(query, orderBy, order);
@@ -80,21 +80,32 @@ namespace backend.Repositories.Implementations
       return await query.ToListAsync();
     }
 
-    private IQueryable<Document> ApplyFilter(IQueryable<Document> query, string searchTerm)
+    private IQueryable<Document> ApplyFilter(IQueryable<Document> query, string? searchTerm, string? startDate, string? endDate)
     {
       if (query == null) throw new ArgumentNullException(nameof(query));
 
       if (!string.IsNullOrWhiteSpace(searchTerm))
       {
-          query = query.Where(d =>
-              d.Title.Contains(searchTerm) ||
-              d.Description.Contains(searchTerm) ||
-              d.ArchiveName.Contains(searchTerm)
-          );
+        query = query.Where(d =>
+          d.Title.Contains(searchTerm) ||
+          d.Description.Contains(searchTerm) ||
+          d.ArchiveName.Contains(searchTerm)
+        );
+      }
+
+      if (DateTime.TryParse(startDate, out var start))
+      {
+        query = query.Where(d => d.CreationDate.Date >= start.Date);
+      }
+
+      if (DateTime.TryParse(endDate, out var end))
+      {
+        query = query.Where(d => d.CreationDate.Date <= end.Date);
       }
 
       return query;
     }
+
 
     private IQueryable<Document> ApplyOrdering(IQueryable<Document> query, string orderBy, string order)
     { 
