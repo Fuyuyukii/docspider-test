@@ -1,0 +1,82 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Usuários</h2>
+
+  <div class="row align-items-end mb-3 g-2">
+    <div class="col-md-4">
+      <label class="form-label">Pesquise por...</label>
+      <input type="text" class="form-control" id="searchInput" placeholder="Título, Descrição ou Nome do arquivo">
+    </div>
+
+    <div class="col-md-5">
+      <label class="form-label">Período</label>
+      <input type="text" class="form-control" id="dateRange" placeholder="Selecione um intervalo">
+    </div>
+
+    <div class="col-md-2 text-end">
+      <button class="btn btn-primary w-100" id="btnAdd">+ Novo Item</button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th class="sortable" data-column="title">Título <span></span></th>
+          <th class="sortable" data-column="description">Descrição <span></span></th>
+          <th class="sortable d-none d-md-table-cell" data-column="archiveName">Arquivo Nome <span></span></th>
+          <th class="sortable d-none d-md-table-cell" data-column="creationDate">Data criação <span></span></th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="documentTable"></tbody>
+    </table>
+  </div>
+
+  <input type="hidden" id="sortColumn" name="sortColumn">
+  <input type="hidden" id="sortDirection" name="sortDirection">
+
+  <nav>
+    <ul class="pagination justify-content-end" id="pagination"></ul>
+  </nav>
+</div>
+
+<div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="documentModalLabel">Novo Documento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="documentForm" enctype="multipart/form-data">
+          <input type="hidden" id="documentId">
+
+          <div class="mb-3">
+            <label for="title" class="form-label">Título</label>
+            <input type="text" class="form-control" id="title" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Descrição</label>
+            <textarea class="form-control" id="description" rows="3" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="fileInput" class="form-label">Arquivo</label>
+            <input class="form-control" type="file" id="fileInput" accept=".pdf,.doc,.docx,.png,.jpg">
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="uploadedFileInfo" type="button" class="btn btn-secondary d-none" onclick="downloadFile()"> Download </button>
+        <button type="submit" class="btn btn-primary" id="saveDocument">Salvar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
